@@ -17,12 +17,18 @@ Including another URLconf
 from django.contrib import admin
 from django.http import HttpResponse
 from django.urls import include, path
+from django.contrib.auth.decorators import login_required
 
 def home(request):
     return HttpResponse("¡Bienvenido a la página de inicio!")
+
+@login_required
+def protected_page(request):
+    return HttpResponse("¡Estás viendo una página protegida!")
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/', include('accounts.urls')), #url app cuentas
     path('', home, name='home'),  # Página de inicio
+    path('protected/', protected_page, name='protected'),  # Página protegida
 ]

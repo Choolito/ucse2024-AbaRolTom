@@ -77,8 +77,15 @@ WSGI_APPLICATION = 'prode_project.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'mssql',
+        'NAME': 'prode_db',
+        'USER': 'prode_user',
+        'PASSWORD': 'password',
+        'HOST': '(localdb)\mssqllocaldb',  # o la dirección IP del servidor
+        'PORT': '1433',  # O el puerto que estés utilizando, usualmente 1433
+        'OPTIONS': {
+            'driver': 'ODBC Driver 17 for SQL Server',
+        },
     }
 }
 
@@ -123,3 +130,5 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+LOGIN_REDIRECT_URL = '/'
