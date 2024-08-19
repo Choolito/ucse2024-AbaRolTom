@@ -19,6 +19,7 @@ from django.http import HttpResponse
 from django.urls import include, path
 from django.contrib.auth.decorators import login_required
 from . import views
+from django.contrib.auth.views import LoginView, LogoutView
 
 @login_required
 def protected_page(request):
