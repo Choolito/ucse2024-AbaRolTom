@@ -15,12 +15,24 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
           <ul class="navbar-nav ms-auto">
-            <li class="nav-item">
-              <a class="nav-link" href="{% url 'login' %}">Iniciar sesión</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="{% url 'register' %}">Registrarse</a>
-            </li>
+            {% if user.is_authenticated %}
+              <li class="nav-item">
+                <span class="nav-link">Bienvenido, {{ user.username }}</span>
+              </li>
+              <li class="nav-item d-flex justify-content-center ms-2">
+                <form method="post" class="d-flex justify-content-center" action="{% url 'logout' %}">
+                  {% csrf_token %}
+                  <button type="submit" class="nav-link btn btn-link" style="display:inline; padding:0; margin:0; border:none; background:none;">Cerrar sesión</button>
+                </form>
+              </li>
+            {% else %}
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'login' %}">Iniciar sesión</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'register' %}">Registrarse</a>
+              </li>
+            {% endif %}
           </ul>
         </div>
       </div>
