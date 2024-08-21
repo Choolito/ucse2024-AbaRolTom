@@ -1,20 +1,24 @@
 from django.shortcuts import get_object_or_404, render
+from django.db.models import Q
 from prode.models import Partido
 
 def lista_partidos(request):
     partidos = Partido.objects.all()
 
     # Aplicar filtros si se proporcionan
-    equipo_local = request.GET.get('equipo_local')
-    equipo_visitante = request.GET.get('equipo_visitante')
+    equipo = request.GET.get('equipo')
     fecha = request.GET.get('fecha')
+    hora = request.GET.get('hora')
 
-    if equipo_local:
-        partidos = partidos.filter(equipo_local__nombre__icontains=equipo_local)
-    if equipo_visitante:
-        partidos = partidos.filter(equipo_visitante__nombre__icontains=equipo_visitante)
+    if equipo:
+        partidos = partidos.filter(
+            Q(equipo_local__nombre__icontains=equipo) | 
+            Q(equipo_visitante__nombre__icontains=equipo)
+        )
     if fecha:
         partidos = partidos.filter(fecha__date=fecha)
+    if hora:
+        partidos = partidos.filter(fecha__time__startswith=hora)
 
     context = {
         'partidos': partidos
