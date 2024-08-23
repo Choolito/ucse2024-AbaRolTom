@@ -12,3 +12,6 @@ def register(request):
     else:
         form = RegisterForm()
     return render(request, "accounts/register.html", {"form": form})
+    
+def home(request):
+    return render(request, 'home.html')

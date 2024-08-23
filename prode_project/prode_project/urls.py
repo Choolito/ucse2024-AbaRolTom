@@ -33,4 +33,5 @@ urlpatterns = [
     path('protected/', protected_page, name='protected'),  # Página protegida
     path('partidos/', lista_partidos, name='lista_partidos'),
     path('partido/<int:partido_id>/', detalle_partido, name='detalle_partido'),
+    path('', views.home, name='home'),
 ]
