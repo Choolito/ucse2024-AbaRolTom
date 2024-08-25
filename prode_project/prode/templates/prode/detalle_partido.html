@@ -55,28 +55,39 @@
                 </div>
 
                 <h4 class="mb-3">Haz tu predicción</h4>
-                <form method="POST" class="needs-validation" novalidate>
-                    {% csrf_token %}
-                    <div class="row g-3">
-                        <div class="col-md-6">
-                            <label for="prediccion_local" class="form-label">Goles {{ partido.equipo_local }}</label>
-                            <input type="number" name="prediccion_local" class="form-control" id="prediccion_local" min="0" required>
-                            <div class="invalid-feedback">
-                                Por favor, ingresa un número válido de goles.
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <label for="prediccion_visitante" class="form-label">Goles {{ partido.equipo_visitante }}</label>
-                            <input type="number" name="prediccion_visitante" class="form-control" id="prediccion_visitante" min="0" required>
-                            <div class="invalid-feedback">
-                                Por favor, ingresa un número válido de goles.
-                            </div>
-                        </div>
+                {% if prediccion_existente %}
+                    <div class="alert alert-info">
+                        <strong>Tu predicción:</strong><br>
+                        {{ partido.equipo_local }}: {{ prediccion_existente.prediccion_local }} goles<br>
+                        {{ partido.equipo_visitante }}: {{ prediccion_existente.prediccion_visitante }} goles
                     </div>
-                    <button type="submit" class="btn btn-primary mt-3">
-                        <i class="fas fa-save me-2"></i>Guardar Predicción
-                    </button>
-                </form>
+                    <a href="{% url 'lista_partidos' %}" class="btn btn-primary mt-3">
+                        <i class="fas fa-arrow-left me-2"></i>Volver a la lista de partidos
+                    </a>
+                {% else %}
+                    <form method="POST" class="needs-validation" novalidate>
+                        {% csrf_token %}
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="prediccion_local" class="form-label">Goles {{ partido.equipo_local }}</label>
+                                <input type="number" name="prediccion_local" class="form-control" id="prediccion_local" min="0" required>
+                                <div class="invalid-feedback">
+                                    Por favor, ingresa un número válido de goles.
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="prediccion_visitante" class="form-label">Goles {{ partido.equipo_visitante }}</label>
+                                <input type="number" name="prediccion_visitante" class="form-control" id="prediccion_visitante" min="0" required>
+                                <div class="invalid-feedback">
+                                    Por favor, ingresa un número válido de goles.
+                                </div>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary mt-3">
+                            <i class="fas fa-save me-2"></i>Guardar Predicción
+                        </button>
+                    </form>
+                {% endif %}
             </div>
         </div>
     </div>
