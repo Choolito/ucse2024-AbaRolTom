@@ -40,10 +40,15 @@
                             <div class="alert alert-danger" role="alert">
                                 <h4 class="alert-heading">Por favor, corrige los siguientes errores:</h4>
                                 <ul>
-                                    {% for field, errors in form.errors.items %}
-                                        {% for error in errors %}
-                                            <li>{{ form.get_field_label|capfirst }}: {{ error }}</li>
-                                        {% endfor %}
+                                    {% for field in form %}
+                                        {% if field.errors %}
+                                            <li>{{ field.label }}</li>
+                                            <ul>
+                                                {% for error in field.errors %}
+                                                    <li>{{ error }}</li>
+                                                {% endfor %}
+                                            </ul>
+                                        {% endif %}
                                     {% endfor %}
                                 </ul>
                             </div>
