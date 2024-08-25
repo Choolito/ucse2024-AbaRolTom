@@ -14,6 +14,7 @@ import os
 from pathlib import Path
 import dj_database_url
 from django.utils.translation import gettext_lazy as _
+from django.contrib.messages import constants as messages
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -62,7 +63,7 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
-            os.path.join(BASE_DIR, 'templates'),
+            os.path.join(BASE_DIR, 'accounts', 'templates'),
         ],
         'APP_DIRS': True,
         'OPTIONS': {
@@ -130,9 +131,11 @@ LOCALE_PATHS = [
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = '/static/'
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 STATICFILES_DIRS = [
-    BASE_DIR / "static",
+     os.path.join(BASE_DIR, 'accounts', 'static'),
 ]
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
@@ -151,3 +154,15 @@ if 'RENDER' in os.environ:
                       'whitenoise.middleware.WhiteNoiseMiddleware')
     STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
     STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+MESSAGE_TAGS = {
+    messages.ERROR: 'danger',
+}
+
+# Configuración básica del correo electrónico
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'atrprode@gmail.com'
+EMAIL_HOST_PASSWORD = 'qera mabv wekk awwz'

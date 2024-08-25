@@ -3,7 +3,8 @@ from django.contrib.auth.models import User
 
 class Equipo(models.Model):
     nombre = models.CharField(max_length=100)
-
+    escudo = models.ImageField(upload_to='escudos/', null=True, blank=True)
+    
     def __str__(self):
         return str(self.nombre)
 
