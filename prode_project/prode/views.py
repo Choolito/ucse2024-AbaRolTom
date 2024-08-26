@@ -37,7 +37,7 @@ def lista_partidos(request):
         prediccion.partido.id: prediccion 
         for prediccion in Prediccion.objects.filter(usuario=usuario)
     }
-
+    print(predicciones_usuario)
     context = {
         'partidos': partidos,
         'predicciones_usuario': predicciones_usuario,

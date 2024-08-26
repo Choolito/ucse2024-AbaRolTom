@@ -60,11 +60,11 @@
                                 <i class="far fa-calendar-alt me-2"></i>{{ partido.fecha|date:"d/m/Y" }}<br>
                                 <i class="far fa-clock me-2"></i>{{ partido.fecha|time:"H:i" }}<br>
                             </p>
-
+                            {% load custom_filters %}
                             {% if user.is_authenticated %}
                                 {% if partido.id in predicciones_usuario %}
-                                    {% with prediccion=predicciones_usuario|default_if_none:partido.id %}
-                                        <p class="card-text">
+                                    {% with prediccion=predicciones_usuario|get_item:partido.id %}
+                                    <p class="card-text">
                                             <strong>Tu Predicción:</strong><br>
                                             {{ partido.equipo_local }}: {{ prediccion.prediccion_local }} goles<br>
                                             {{ partido.equipo_visitante }}: {{ prediccion.prediccion_visitante }} goles
@@ -77,9 +77,11 @@
                         </div>
                         <div class="card-footer bg-transparent border-top-0">
                             {% if user.is_authenticated %}
+                                {% if partido.id not in predicciones_usuario %}
                                 <a href="{% url 'detalle_partido' partido.id %}" class="btn btn-outline-primary w-100">
                                     <i class="fas fa-info-circle me-2"></i>Hacer Predicción
                                 </a>
+                                {%endif%}
                             {% else %}
                                 <a href="{% url 'login' %}" class="btn btn-outline-secondary w-100">
                                     <i class="fas fa-sign-in-alt me-2"></i>Iniciar sesión para predecir
