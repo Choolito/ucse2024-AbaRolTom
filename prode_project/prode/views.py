@@ -5,6 +5,7 @@ from prode.models import Partido, Prediccion
 from prode.forms import PrediccionForm
 from django.contrib.auth.decorators import login_required
 
+
 def lista_partidos(request):
     partidos = Partido.objects.all()
 
@@ -23,17 +24,27 @@ def lista_partidos(request):
     if hora:
         partidos = partidos.filter(fecha__time__startswith=hora)
 
-    # Si el usuario está logueado, obtener sus predicciones
-    predicciones = {}
-    if request.user.is_authenticated:
-        predicciones_qs = Prediccion.objects.filter(usuario=request.user).values('partido_id', 'prediccion_local', 'prediccion_visitante')
-        predicciones = {p['partido_id']: p for p in predicciones_qs}
+    if equipo:
+        partidos = partidos.filter(
+            Q(equipo_local__nombre__icontains=equipo) | 
+            Q(equipo_visitante__nombre__icontains=equipo)
+        )
+
+    # Si el usuario está autenticado, buscar sus predicciones
+    # Crear un diccionario de predicciones del usuario con el partido.id como clave
+    usuario = request.user
+    predicciones_usuario = {
+        prediccion.partido.id: prediccion 
+        for prediccion in Prediccion.objects.filter(usuario=usuario)
+    }
 
     context = {
         'partidos': partidos,
-        'predicciones': predicciones if request.user.is_authenticated else {}
+        'predicciones_usuario': predicciones_usuario,
     }
+
     return render(request, 'prode/lista_partidos.html', context)
+
 
 @login_required
 def detalle_partido(request, partido_id):
