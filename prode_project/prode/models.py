@@ -15,6 +15,7 @@ class Partido(models.Model):
     fecha = models.DateTimeField()
     goles_local = models.IntegerField(blank=True, null=True)
     goles_visitante = models.IntegerField(blank=True, null=True)
+    fecha_liga = models.IntegerField(blank=True, null=True)
 
     def __str__(self):
         return f"{self.equipo_local} vs {self.equipo_visitante} - {self.fecha}"

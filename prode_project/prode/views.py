@@ -4,7 +4,7 @@ from django.db.models import Q
 from prode.models import Partido, Prediccion
 from prode.forms import PrediccionForm
 from django.contrib.auth.decorators import login_required
-
+from django.utils import timezone
 
 def lista_partidos(request):
     partidos = Partido.objects.all()
@@ -13,6 +13,7 @@ def lista_partidos(request):
     equipo = request.GET.get('equipo')
     fecha = request.GET.get('fecha')
     hora = request.GET.get('hora')
+    fecha_liga = request.GET.get('fecha_liga')
 
     if equipo:
         partidos = partidos.filter(
@@ -23,12 +24,8 @@ def lista_partidos(request):
         partidos = partidos.filter(fecha__date=fecha)
     if hora:
         partidos = partidos.filter(fecha__time__startswith=hora)
-
-    if equipo:
-        partidos = partidos.filter(
-            Q(equipo_local__nombre__icontains=equipo) | 
-            Q(equipo_visitante__nombre__icontains=equipo)
-        )
+    if fecha_liga:
+        partidos = partidos.filter(fecha_liga=fecha_liga)
 
     # Si el usuario está autenticado, buscar sus predicciones
     # Crear un diccionario de predicciones del usuario con el partido.id como clave
@@ -37,10 +34,18 @@ def lista_partidos(request):
         prediccion.partido.id: prediccion 
         for prediccion in Prediccion.objects.filter(usuario=usuario)
     }
-    print(predicciones_usuario)
+
+    # Crear un diccionario para verificar si el tiempo límite ha pasado para cada partido
+    tiempos_limite = {
+        partido.id: timezone.now() <= (partido.fecha - timezone.timedelta(hours=1))
+        for partido in partidos
+    }
+
     context = {
         'partidos': partidos,
         'predicciones_usuario': predicciones_usuario,
+        'tiempos_limite': tiempos_limite,  
+        'rango_fechas': range(1, 28),
     }
 
     return render(request, 'prode/lista_partidos.html', context)
@@ -53,6 +58,11 @@ def detalle_partido(request, partido_id):
     
     # Comprobar si el usuario ya ha realizado una predicción para este partido
     prediccion_existente = Prediccion.objects.filter(partido=partido, usuario=usuario).first()
+
+    # Verificar si la hora del partido - 1 hora es mayor a la hora actual
+    tiempo_limite = partido.fecha - timezone.timedelta(hours=1)
+    if timezone.now() > tiempo_limite:
+        return redirect('lista_partidos')
 
     if request.method == 'POST':
         if not prediccion_existente:  # Evitar duplicados
@@ -69,6 +79,6 @@ def detalle_partido(request, partido_id):
 
     context = {
         'partido': partido,
-        'prediccion_existente': prediccion_existente,
+        'prediccion_existente': prediccion_existente
     }
     return render(request, 'prode/detalle_partido.html', context)
