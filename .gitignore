@@ -60,6 +60,10 @@ staticfiles/
 *.sqlite3
 media/
 
+# Exceptúa mydatabase
+prode_project/mydatabase
+!mydatabase
+
 # Environments
 .env
 .venv
