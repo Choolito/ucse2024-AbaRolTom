@@ -36,10 +36,11 @@ def lista_partidos(request):
     }
 
     # Crear un diccionario para verificar si el tiempo límite ha pasado para cada partido
-    tiempos_limite = {
-        partido.id: timezone.now() <= (partido.fecha - timezone.timedelta(hours=1))
-        for partido in partidos
-    }
+    tiempos_limite = {}
+    for partido in partidos:
+        tiempo_limite = partido.fecha - timezone.timedelta(hours=1)
+        if timezone.now() > tiempo_limite:
+            tiempos_limite[partido.id] = True
 
     context = {
         'partidos': partidos,
