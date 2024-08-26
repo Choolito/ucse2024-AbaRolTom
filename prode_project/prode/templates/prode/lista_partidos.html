@@ -66,8 +66,19 @@
                                     {% with prediccion=predicciones_usuario|get_item:partido.id %}
                                     <p class="card-text">
                                             <strong>Tu Predicción:</strong><br>
-                                            {{ partido.equipo_local }}: {{ prediccion.prediccion_local }} goles<br>
-                                            {{ partido.equipo_visitante }}: {{ prediccion.prediccion_visitante }} goles
+                                            {{partido.equipo_local}}: 
+                                            {% if prediccion.prediccion_local == 1 %}
+                                                {{ prediccion.prediccion_local }} gol
+                                            {% else %}
+                                                {{ prediccion.prediccion_local }} goles
+                                            {% endif %}
+                                            <br>
+                                            {{partido.equipo_visitante}}: 
+                                            {% if prediccion.prediccion_visitante == 1 %}
+                                                {{ prediccion.prediccion_visitante }} gol<br>
+                                            {% else %}
+                                                {{ prediccion.prediccion_visitante }} goles<br>
+                                            {% endif %}
                                         </p>
                                     {% endwith %}
                                 {% else %}
