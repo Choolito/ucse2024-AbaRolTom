@@ -7,13 +7,23 @@ from django.contrib.auth.decorators import login_required
 from django.utils import timezone
 
 def lista_partidos(request):
-    partidos = Partido.objects.all()
+    # Obtener la fecha actual de la liga
+    fecha_liga = request.GET.get('fecha_liga')
+    current_fecha = int(fecha_liga) if fecha_liga else 0
 
-    # Aplicar filtros si se proporcionan
+    # Asegurarse de que current_fecha esté dentro del rango válido
+    current_fecha = max(0, min(current_fecha, 27))
+
+    # Filtrar partidos
+    if current_fecha == 0:
+        partidos = Partido.objects.all().order_by('fecha_liga', 'fecha')
+    else:
+        partidos = Partido.objects.filter(fecha_liga=current_fecha).order_by('fecha')
+
+    # Aplicar filtros adicionales si se proporcionan
     equipo = request.GET.get('equipo')
     fecha = request.GET.get('fecha')
     hora = request.GET.get('hora')
-    fecha_liga = request.GET.get('fecha_liga')
 
     if equipo:
         partidos = partidos.filter(
@@ -24,16 +34,15 @@ def lista_partidos(request):
         partidos = partidos.filter(fecha__date=fecha)
     if hora:
         partidos = partidos.filter(fecha__time__startswith=hora)
-    if fecha_liga:
-        partidos = partidos.filter(fecha_liga=fecha_liga)
 
     # Si el usuario está autenticado, buscar sus predicciones
-    # Crear un diccionario de predicciones del usuario con el partido.id como clave
     usuario = request.user
-    predicciones_usuario = {
-        prediccion.partido.id: prediccion 
-        for prediccion in Prediccion.objects.filter(usuario=usuario)
-    }
+    predicciones_usuario = {}
+    if usuario.is_authenticated:
+        predicciones_usuario = {
+            prediccion.partido.id: prediccion 
+            for prediccion in Prediccion.objects.filter(usuario=usuario, partido__in=partidos)
+        }
 
     # Crear un diccionario para verificar si el tiempo límite ha pasado para cada partido
     tiempos_limite = {}
@@ -42,15 +51,21 @@ def lista_partidos(request):
         if timezone.now() > tiempo_limite:
             tiempos_limite[partido.id] = True
 
+    # Calcular fecha anterior y siguiente
+    fecha_anterior = max(0, current_fecha - 1)
+    fecha_siguiente = min(27, current_fecha + 1)
+
     context = {
         'partidos': partidos,
         'predicciones_usuario': predicciones_usuario,
         'tiempos_limite': tiempos_limite,  
         'rango_fechas': range(1, 28),
+        'current_fecha': current_fecha,
+        'fecha_anterior': fecha_anterior,
+        'fecha_siguiente': fecha_siguiente,
     }
 
     return render(request, 'prode/lista_partidos.html', context)
-
 
 @login_required
 def detalle_partido(request, partido_id):
