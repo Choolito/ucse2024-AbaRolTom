@@ -82,7 +82,7 @@
                         <span class="match-status" data-partido-id="{{ partido.id }}" data-fecha="{{ partido.fecha|date:'Y-m-d H:i:s' }}">
                             {{ partido.get_status_display }}
                         </span>
-                        <span class="match-time">{{ partido.fecha|date:"H:i" }}</span>
+                        <span class="match-time">Fecha: {{fecha_liga}} - Hora: {{ partido.fecha|date:"H:i" }}</span>
                     </div>
                     <div class="card-body">
                         <div class="row align-items-center">
@@ -149,20 +149,6 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        function cambiarFecha(fecha) {
-            fecha = parseInt(fecha);
-            if (fecha < 0) {
-                fecha = 0;
-            } else if (fecha > 27) {
-                fecha = 27;
-            }
-            if (fecha === 0) {
-                window.location.href = '{% url "lista_partidos" %}';
-            } else {
-                window.location.href = `?fecha_liga=${fecha}`;
-            }
-        }
-    </script>
+    <script src="{% static 'js/lista_partidos.js' %}"></script>
 </body>
 </html>
