@@ -46,10 +46,22 @@ def lista_partidos(request):
 
     # Crear un diccionario para verificar si el tiempo límite ha pasado para cada partido
     tiempos_limite = {}
+    ahora = timezone.now()
     for partido in partidos:
         tiempo_limite = partido.fecha - timezone.timedelta(hours=1)
-        if timezone.now() > tiempo_limite:
+        if ahora > tiempo_limite:
             tiempos_limite[partido.id] = True
+        
+        # Actualizar el estado del partido
+        tiempo_restante = (partido.fecha - ahora).total_seconds() / 60
+        if tiempo_restante > 60:
+            partido.status = 'Programado'
+        elif tiempo_restante > 0:
+            partido.status = 'Por comenzar'
+        elif tiempo_restante > -105:
+            partido.status = 'En juego'
+        else:
+            partido.status = 'Finalizado'
 
     # Calcular fecha anterior y siguiente
     fecha_anterior = max(0, current_fecha - 1)

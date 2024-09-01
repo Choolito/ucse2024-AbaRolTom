@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.utils import timezone
 
 class Equipo(models.Model):
     nombre = models.CharField(max_length=100)
@@ -17,6 +18,27 @@ class Partido(models.Model):
     goles_visitante = models.IntegerField(blank=True, null=True)
     fecha_liga = models.IntegerField(blank=True, null=True)
 
+    STATUS_CHOICES = [
+        ('programado', 'Programado'),
+        ('por_comenzar', 'Por comenzar'),
+        ('en_juego', 'En juego'),
+        ('finalizado', 'Finalizado'),
+    ]
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='programado')
+
+    def get_status_display(self):
+        ahora = timezone.now()
+        tiempo_restante = (self.fecha - ahora).total_seconds() / 60
+
+        if tiempo_restante > 60:
+            return 'Programado'
+        elif tiempo_restante > 0:
+            return 'Por comenzar'
+        elif tiempo_restante > -105:
+            return 'En juego'
+        else:
+            return 'Finalizado'
+        
     def __str__(self):
         return f"{self.equipo_local} vs {self.equipo_visitante} - {self.fecha}"
 

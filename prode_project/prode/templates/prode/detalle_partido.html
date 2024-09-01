@@ -4,14 +4,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Detalle del Partido - Prode de Fútbol</title>
+    <title>Detalle del Partido - ATR Prode</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
-    {% load static %}
     <link rel="stylesheet" href="{% static 'css/detalle_partido.css' %}">
 </head>
 <body class="bg-light">
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <nav class="navbar navbar-expand-lg navbar-dark">
         <div class="container">
             <a class="navbar-brand" href="#"><i class="fas fa-futbol me-2"></i>ATR Prode</a>
             <a href="{% url 'lista_partidos' %}" class="btn btn-outline-light">
@@ -21,84 +20,92 @@
     </nav>
 
     <div class="container mt-4">
-        <div class="card">
+        <div class="card main-card">
+            <div class="card-header bg-primary text-white">
+                <h1 class="card-title text-center mb-0">Detalle del Partido</h1>
+            </div>
             <div class="card-body">
-                <h1 class="card-title text-center mb-4">{{ partido.equipo_local }} vs {{ partido.equipo_visitante }}</h1>
-                
                 <div class="row align-items-center mb-4">
                     <div class="col-md-5 text-center">
-                        {% if partido.equipo_local.escudo %}
-                            <img src="{{ partido.equipo_local.escudo.url }}" alt="Escudo de {{ partido.equipo_local }}" class="team-logo">
-                        {% else %}
-                            <img src="{% static 'images/escudos/default.png' %}" alt="Escudo por defecto" class="team-logo">
-                        {% endif %}
-                        <h3>{{ partido.equipo_local }}</h3>
+                        <div class="team-container">
+                            {% if partido.equipo_local.escudo %}
+                                <img src="{{ partido.equipo_local.escudo.url }}" alt="Escudo de {{ partido.equipo_local }}" class="team-logo">
+                            {% else %}
+                                <img src="{% static 'images/escudos/default.png' %}" alt="Escudo por defecto" class="team-logo">
+                            {% endif %}
+                            <h3 class="team-name">{{ partido.equipo_local }}</h3>
+                        </div>
                     </div>
                     <div class="col-md-2 text-center">
-                        <h2>VS</h2>
+                        <div class="vs-container">
+                            <span class="vs-text">VS</span>
+                        </div>
                     </div>
                     <div class="col-md-5 text-center">
-                        {% if partido.equipo_visitante.escudo %}
-                            <img src="{{ partido.equipo_visitante.escudo.url }}" alt="Escudo de {{ partido.equipo_visitante }}" class="team-logo">
-                        {% else %}
-                            <img src="{% static 'images/escudos/default.png' %}" alt="Escudo por defecto" class="team-logo">
-                        {% endif %}
-                        <h3>{{ partido.equipo_visitante }}</h3>
-                    </div>
-                </div>
-
-                <div class="container py-3">
-                    <div class="row mb-4 justify-content-center">
-                        <div class="col-md-4 text-center">
-                            <p><i class="far fa-calendar-alt me-2"></i>Fecha: {{ partido.fecha|date:"d/m/Y" }}</p>
-                        </div>
-                        <div class="col-md-4 text-center">
-                            <p><i class="far fa-clock me-2"></i>Hora: {{ partido.fecha|time:"H:i" }}</p>
+                        <div class="team-container">
+                            {% if partido.equipo_visitante.escudo %}
+                                <img src="{{ partido.equipo_visitante.escudo.url }}" alt="Escudo de {{ partido.equipo_visitante }}" class="team-logo">
+                            {% else %}
+                                <img src="{% static 'images/escudos/default.png' %}" alt="Escudo por defecto" class="team-logo">
+                            {% endif %}
+                            <h3 class="team-name">{{ partido.equipo_visitante }}</h3>
                         </div>
                     </div>
                 </div>
 
-                <h4 class="mb-3">Haz tu predicción</h4>
-                {% if prediccion_existente %}
-                    <div class="alert alert-info">
-                        <strong>Tu predicción:</strong><br>
-                        {{ partido.equipo_local }}: {{ prediccion_existente.prediccion_local }} goles<br>
-                        {{ partido.equipo_visitante }}: {{ prediccion_existente.prediccion_visitante }} goles
+                <div class="match-info">
+                    <div class="info-item">
+                        <i class="far fa-calendar-alt me-2"></i>
+                        <span>Fecha: {{ partido.fecha|date:"d/m/Y" }}</span>
                     </div>
-                    <a href="{% url 'lista_partidos' %}" class="btn btn-primary mt-3">
-                        <i class="fas fa-arrow-left me-2"></i>Volver a la lista de partidos
-                    </a>
-                {% else %}
-                    <form method="POST" class="needs-validation" novalidate>
-                        {% csrf_token %}
-                        <div class="row g-3">
-                            <div class="col-md-6">
-                                <label for="prediccion_local" class="form-label">Goles {{ partido.equipo_local }}</label>
-                                <input type="number" name="prediccion_local" class="form-control" id="prediccion_local" min="0" required>
-                                <div class="invalid-feedback">
-                                    Por favor, ingresa un número válido de goles.
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <label for="prediccion_visitante" class="form-label">Goles {{ partido.equipo_visitante }}</label>
-                                <input type="number" name="prediccion_visitante" class="form-control" id="prediccion_visitante" min="0" required>
-                                <div class="invalid-feedback">
-                                    Por favor, ingresa un número válido de goles.
-                                </div>
-                            </div>
+                    <div class="info-item">
+                        <i class="far fa-clock me-2"></i>
+                        <span>Hora: {{ partido.fecha|time:"H:i" }}</span>
+                    </div>
+                </div>
+
+                <div class="prediction-section mt-4">
+                    <h4 class="mb-3">Tu Predicción</h4>
+                    {% if prediccion_existente %}
+                        <div class="alert alert-info">
+                            <strong>Tu predicción actual:</strong><br>
+                            {{ partido.equipo_local }}: {{ prediccion_existente.prediccion_local }} goles<br>
+                            {{ partido.equipo_visitante }}: {{ prediccion_existente.prediccion_visitante }} goles
                         </div>
-                        <button type="submit" class="btn btn-primary mt-3">
-                            <i class="fas fa-save me-2"></i>Guardar Predicción
-                        </button>
-                    </form>
-                {% endif %}
+                        <a href="{% url 'lista_partidos' %}" class="btn btn-primary mt-3">
+                            <i class="fas fa-arrow-left me-2"></i>Volver a la lista de partidos
+                        </a>
+                    {% else %}
+                        <form method="POST" class="needs-validation" novalidate>
+                            {% csrf_token %}
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label for="prediccion_local" class="form-label">Goles {{ partido.equipo_local }}</label>
+                                    <input type="number" name="prediccion_local" class="form-control" id="prediccion_local" min="0" required>
+                                    <div class="invalid-feedback">
+                                        Por favor, ingresa un número válido de goles.
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="prediccion_visitante" class="form-label">Goles {{ partido.equipo_visitante }}</label>
+                                    <input type="number" name="prediccion_visitante" class="form-control" id="prediccion_visitante" min="0" required>
+                                    <div class="invalid-feedback">
+                                        Por favor, ingresa un número válido de goles.
+                                    </div>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary mt-3">
+                                <i class="fas fa-save me-2"></i>Guardar Predicción
+                            </button>
+                        </form>
+                    {% endif %}
+                </div>
             </div>
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // Ejemplo de validación de formulario de Bootstrap
         (function () {
             'use strict'
             var forms = document.querySelectorAll('.needs-validation')

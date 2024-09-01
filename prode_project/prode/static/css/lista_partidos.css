@@ -3,9 +3,27 @@ body {
     color: #000080;
     font-family: Arial, sans-serif;
 }
+
 .navbar {
     background-color: #0000cd !important;
 }
+
+.container {
+    max-width: 1200px;
+}
+
+.card {
+    border: none;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+}
+
+.card-header {
+    background-color: #1e90ff;
+    color: white;
+    font-weight: bold;
+}
+
 .fecha-number {
     display: inline-block;
     width: 30px;
@@ -14,102 +32,151 @@ body {
     text-align: center;
     background-color: #4169e1;
     color: white;
-    margin: 2px;
+    margin: 5px;
     border-radius: 50%;
     cursor: pointer;
+    transition: background-color 0.3s ease;
 }
+
 .fecha-number.active {
     background-color: #0000ff;
     font-weight: bold;
 }
-.fecha-header {
+
+.fecha-number:hover {
+    background-color: #0000ff;
+}
+
+.chevron-icon {
+    cursor: pointer;
+    font-size: 1.2em;
+    transition: color 0.3s ease;
+}
+
+.chevron-icon:hover {
+    color: #f0f8ff;
+}
+
+.date-header {
     background-color: #1e90ff;
     color: white;
     padding: 10px;
     margin-bottom: 15px;
     border-radius: 5px;
+    font-size: 1.2em;
 }
+
 .match-card {
     background-color: white;
-    margin-bottom: 10px;
     border: 1px solid #4169e1;
     border-radius: 5px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    position: relative;
     overflow: hidden;
 }
-.match-status {
-    position: absolute;
-    top: 0;
-    left: 0;
+
+.match-card .card-header {
     background-color: #4169e1;
     color: white;
-    padding: 5px 10px;
-    border-bottom-right-radius: 5px;
-    font-size: 0.8em;
-    z-index: 1;
-}
-.team-logo {
-    width: 30px;
-    height: 30px;
-    object-fit: contain;
-    margin-right: 10px;
-}
-.score {
-    font-weight: bold;
-    font-size: 1.2em;
-    min-width: 60px;
-    text-align: center;
-}
-.scorers {
-    font-size: 0.8em;
-    background-color: #e6f2ff;
-    padding: 5px;
-    border-radius: 3px;
-    margin-top: 10px;
-}
-.date-header {
-    background-color: #4169e1;
-    color: white;
-    padding: 5px 10px;
-    margin-top: 20px;
-    margin-bottom: 10px;
-    border-radius: 5px;
-}
-.chevron-icon {
-    cursor: pointer;
-}
-.btn-prediccion {
-    font-size: 1rem;
-    padding: 8px 16px;
-    width: auto;
-    margin: 15px auto 0;
-    display: block;
-    transition: all 0.3s ease;
-}
-.btn-prediccion:hover {
-    transform: scale(1.05);
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-}
-.match-details {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 15px 10px 10px;
+    padding: 10px 15px;
 }
+
+.match-status {
+    font-weight: bold;
+}
+
+.match-time {
+    font-size: 0.9em;
+}
+
 .team {
     display: flex;
     align-items: center;
-    width: 40%;
 }
+
 .team-local {
     justify-content: flex-end;
-    text-align: right;
 }
+
 .team-visitante {
     justify-content: flex-start;
-    text-align: left;
 }
-.team-name {
+
+.team-logo-container {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     margin: 0 10px;
+}
+
+.team-logo {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+.team-name {
+    font-weight: bold;
+    color: #000080;
+}
+
+.score {
+    font-size: 1.5em;
+    font-weight: bold;
+    color: #000080;
+}
+
+.scorers {
+    font-size: 0.9em;
+    color: #4169e1;
+    margin-top: 10px;
+}
+
+.btn-prediccion {
+    background-color: #4169e1;
+    border-color: #4169e1;
+    transition: all 0.3s ease;
+}
+
+.btn-prediccion:hover {
+    background-color: #0000cd;
+    border-color: #0000cd;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.alert {
+    margin-bottom: 0;
+}
+
+@media (max-width: 768px) {
+    .team-name {
+        font-size: 0.9em;
+    }
+
+    .score {
+        font-size: 1.2em;
+    }
+
+    .match-card .card-body {
+        padding: 10px;
+    }
+}
+
+@media (max-width: 576px) {
+    .team-logo-container {
+        width: 30px;
+        height: 30px;
+    }
+
+    .team-name {
+        font-size: 0.8em;
+    }
+
+    .score {
+        font-size: 1em;
+    }
 }
