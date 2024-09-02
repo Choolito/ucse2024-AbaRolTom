@@ -1,0 +1,23 @@
+.card-hover:hover {
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    transition: box-shadow 0.3s ease-in-out;
+}
+.bg-primary-light {
+    background-color: #e6f2ff;
+}
+.navbar {
+    background-color: #0000cd !important;
+}
+.alert {
+    margin-bottom: 20px;
+}
+.alert-success {
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+    color: #155724;
+}
+.alert-danger {
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+    color: #721c24;
+}

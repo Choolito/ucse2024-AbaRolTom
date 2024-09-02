@@ -1,0 +1,47 @@
+body {
+    background-color: #f8f9fa;
+}
+
+.navbar-brand {
+    font-weight: bold;
+}
+
+.navbar {
+    background-color: #0000cd !important;
+}
+
+.card-hover:hover {
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    transition: box-shadow 0.3s ease-in-out;
+}
+
+.welcome-card {
+    max-width: 1200px; /* Ajusta este valor según sea necesario */
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.welcome-title {
+    font-size: 2.5rem; /* Tamaño base de la fuente */
+    white-space: nowrap; /* Previene el salto de línea */
+    overflow: hidden; /* Oculta el contenido que se desborda */
+    text-overflow: ellipsis; /* Muestra puntos suspensivos si el texto se desborda */
+}
+
+.welcome-text {
+    display: inline-block;
+    max-width: 100%; /* Asegura que el texto no se desborde del contenedor */
+}
+
+/* Ajustes responsivos */
+@media (max-width: 1200px) {
+    .welcome-title {
+        font-size: calc(1.5rem + 1.5vw); /* Ajusta el tamaño de la fuente de forma responsiva */
+    }
+}
+
+@media (max-width: 768px) {
+    .welcome-title {
+        white-space: normal; /* Permite el salto de línea en pantallas muy pequeñas */
+    }
+}

@@ -20,6 +20,9 @@ from django.urls import include, path
 from django.contrib.auth.decorators import login_required
 from . import views
 from django.contrib.auth.views import LoginView, LogoutView
+from prode.views import lista_partidos, detalle_partido
+from django.conf import settings
+from django.conf.urls.static import static
 
 @login_required
 def protected_page(request):
@@ -30,4 +33,10 @@ urlpatterns = [
     path('accounts/', include('accounts.urls')), #url app cuentas
     path('', views.index, name='index'),
     path('protected/', protected_page, name='protected'),  # Página protegida
+    path('partidos/', lista_partidos, name='lista_partidos'),
+    path('partido/<int:partido_id>/', detalle_partido, name='detalle_partido'),
+    path('', views.home, name='home'),
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
