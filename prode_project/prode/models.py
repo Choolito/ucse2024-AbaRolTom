@@ -21,7 +21,9 @@ class Partido(models.Model):
     STATUS_CHOICES = [
         ('programado', 'Programado'),
         ('por_comenzar', 'Por comenzar'),
-        ('en_juego', 'En juego'),
+        ('en_proceso', 'En proceso'),
+        ('suspendido', 'Suspendido'),
+        ('cancelado', 'Cancelado'),
         ('finalizado', 'Finalizado'),
     ]
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='programado')
