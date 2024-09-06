@@ -69,7 +69,6 @@ def login_view(request):
             if user is not None:
                 if user.is_active:
                     login(request, user)
-                    return redirect('index')
                 else:
                     form.add_error(None, "Por favor, verifica tu correo electrónico antes de iniciar sesión.")
             else:
