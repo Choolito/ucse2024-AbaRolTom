@@ -53,5 +53,43 @@ class Prediccion(models.Model):
     class Meta:
         unique_together = ('partido', 'usuario')  # Evitar duplicados
 
+    def resultado_real(self):
+        """Retorna el resultado real del partido como 'L' (Local), 'V' (Visitante), o 'E' (Empate)."""
+        if self.partido.goles_local > self.partido.goles_visitante:
+            return 'L'  # Victoria del local
+        elif self.partido.goles_local < self.partido.goles_visitante:
+            return 'V'  # Victoria del visitante
+        else:
+            return 'E'  # Empate
+
+    def resultado_prediccion(self):
+        """Retorna el resultado de la predicción como 'L', 'V', o 'E'."""
+        if self.prediccion_local > self.prediccion_visitante:
+            return 'L'  # Victoria del local
+        elif self.prediccion_local < self.prediccion_visitante:
+            return 'V'  # Victoria del visitante
+        else:
+            return 'E'  # Empate
+
+    def es_correcta(self):
+        """Verifica el nivel de acierto y retorna una puntuación según el tipo de acierto."""
+        
+        puntos = 0  # Puntos totales
+
+        # 1. Acierto exacto (resultado completo)
+        if (self.prediccion_local == self.partido.goles_local and
+            self.prediccion_visitante == self.partido.goles_visitante):
+            puntos += 5  # Acierto completo del resultado con goles 
+
+        # 2. Acierto parcial (goles de un solo equipo)
+        elif self.prediccion_local == self.partido.goles_local or self.prediccion_visitante == self.partido.goles_visitante:
+            puntos += 1  # Acierto parcial (solo goles de un equipo)
+
+        # 3. Acierto de resultado (1X2)
+        if self.resultado_prediccion() == self.resultado_real():
+            puntos += 2  # Acierto del resultado (victoria, empate o derrota)
+
+        return puntos  # Retornar la cantidad de puntos obtenidos por la predicción
+
     def __str__(self):
         return f"{self.usuario} - {self.partido} - {self.prediccion_local}:{self.prediccion_visitante}"
