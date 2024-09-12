@@ -1,10 +1,13 @@
 import pdb
 from django.shortcuts import get_object_or_404, redirect, render
 from django.db.models import Q
-from prode.models import Partido, Prediccion
+from prode.models import Grupo, Partido, Prediccion
 from prode.forms import PrediccionForm
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone
+
+from prode_project.prode.utils import calcular_ranking_global, calcular_ranking_grupo, generar_codigo_invitacion
+
 
 def lista_partidos(request):
     # Obtener la fecha actual de la liga
@@ -110,3 +113,59 @@ def detalle_partido(request, partido_id):
         'prediccion_existente': prediccion_existente
     }
     return render(request, 'prode/detalle_partido.html', context)
+
+@login_required
+def ranking_global(request):
+    # Obtener el ranking global
+    usuarios_con_puntaje = calcular_ranking_global()
+
+    context = {
+        'usuarios_con_puntaje': usuarios_con_puntaje,
+    }
+    return render(request, 'prode/ranking_global.html', context)
+
+@login_required
+def crear_grupo(request):
+    if request.method == 'POST':
+        nombre = request.POST.get('nombre_grupo')
+        descripcion = request.POST.get('descripcion_grupo', '')
+        privacidad = request.POST.get('privacidad_grupo', 'publico')
+
+        # Crear el grupo con el usuario actual como creador
+        grupo = Grupo.objects.create(
+            nombre=nombre,
+            descripcion=descripcion,
+            privacidad=privacidad,
+            creador=request.user  # Suponiendo que la relación está en el modelo
+        )
+        return redirect('detalle_grupo', grupo_id=grupo.id)
+
+    return render(request, 'prode/crear_grupo.html')
+
+@login_required
+def unirse_grupo(request):
+    if request.method == 'POST':
+        codigo_invitacion = request.POST.get('codigo_invitacion')
+        
+        # Buscar el grupo con ese código de invitación
+        grupo = get_object_or_404(Grupo, codigo_invitacion=codigo_invitacion)
+        
+        # Añadir al usuario al grupo si aún no está
+        if request.user not in grupo.miembros.all():
+            grupo.miembros.add(request.user)
+            return redirect('detalle_grupo', grupo_id=grupo.id)
+        else:
+            return redirect('')  # Redirigir a la home
+
+    return render(request, 'prode/unirse_grupo.html')
+
+@login_required
+def ranking_grupo(request, grupo_id):
+    grupo = get_object_or_404(Grupo, id=grupo_id)
+    ranking = calcular_ranking_grupo(grupo_id)
+    
+    context = {
+        'grupo': grupo,
+        'ranking': ranking,
+    }
+    return render(request, 'prode/ranking_grupo.html', context)

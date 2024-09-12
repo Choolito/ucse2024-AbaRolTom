@@ -1,0 +1,23 @@
+<h2>Ranking Global</h2>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Posición</th>
+            <th>Usuario</th>
+            <th>Puntaje Total</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for usuario in usuarios_con_puntaje %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ usuario.username }}</td>
+                <td>{{ usuario.puntaje_total }}</td>
+            </tr>
+        {% empty %}
+            <tr>
+                <td colspan="3">No hay usuarios con predicciones aún.</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>

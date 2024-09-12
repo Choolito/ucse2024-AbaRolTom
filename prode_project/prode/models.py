@@ -1,6 +1,9 @@
+import random
+import string
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
+from django.db.models import Sum, F
 
 class Equipo(models.Model):
     nombre = models.CharField(max_length=100)
@@ -93,3 +96,12 @@ class Prediccion(models.Model):
 
     def __str__(self):
         return f"{self.usuario} - {self.partido} - {self.prediccion_local}:{self.prediccion_visitante}"
+
+#Grupo de amigos
+class Grupo(models.Model):
+    nombre = models.CharField(max_length=100)
+    usuarios = models.ManyToManyField(User, related_name='grupos')
+    codigo_invitacion = models.CharField(max_length=10, unique=True) #codigo que usaran para unirse al grupo
+
+    def __str__(self):
+        return self.nombre
