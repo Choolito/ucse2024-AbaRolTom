@@ -1,0 +1,16 @@
+<h2>Estadísticas de Predicciones</h2>
+
+{% for estadistica in estadisticas %}
+    <div class="card mb-3">
+        <div class="card-header">
+            <h5>{{ estadistica.partido.equipo_local }} vs {{ estadistica.partido.equipo_visitante }}</h5>
+        </div>
+        <div class="card-body">
+            <p><strong>Porcentaje de victoria para {{ estadistica.partido.equipo_local }}:</strong> {{ estadistica.porcentaje_victoria_local|floatformat:2 }}%</p>
+            <p><strong>Porcentaje de victoria para {{ estadistica.partido.equipo_visitante }}:</strong> {{ estadistica.porcentaje_victoria_visitante|floatformat:2 }}%</p>
+            <p><strong>Porcentaje de empate:</strong> {{ estadistica.porcentaje_empate|floatformat:2 }}%</p>
+        </div>
+    </div>
+{% empty %}
+    <p>No hay partidos futuros.</p>
+{% endfor %}

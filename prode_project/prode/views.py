@@ -5,7 +5,7 @@ from prode.models import Grupo, Partido, Prediccion
 from prode.forms import PrediccionForm
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone
-
+from django.db.models import Count, F, Q
 from prode_project.prode.utils import calcular_ranking_global, calcular_ranking_grupo, generar_codigo_invitacion
 
 
@@ -169,3 +169,34 @@ def ranking_grupo(request, grupo_id):
         'ranking': ranking,
     }
     return render(request, 'prode/ranking_grupo.html', context)
+
+@login_required
+def estadisticas_view(request):
+    partidos = Partido.objects.filter(fecha__gt=timezone.now())  # Solo partidos futuros
+    estadisticas = []
+
+    for partido in partidos:
+        total_predicciones = Prediccion.objects.filter(partido=partido).count()
+        
+        if total_predicciones == 0:
+            porcentaje_victoria_local = porcentaje_victoria_visitante = porcentaje_empate = 0
+        else:
+            predicciones_local = Prediccion.objects.filter(partido=partido, prediccion_local__gt=F('prediccion_visitante')).count()
+            predicciones_visitante = Prediccion.objects.filter(partido=partido, prediccion_visitante__gt=F('prediccion_local')).count()
+            predicciones_empate = Prediccion.objects.filter(partido=partido, prediccion_local=F('prediccion_visitante')).count()
+
+            porcentaje_victoria_local = (predicciones_local / total_predicciones) * 100
+            porcentaje_victoria_visitante = (predicciones_visitante / total_predicciones) * 100
+            porcentaje_empate = (predicciones_empate / total_predicciones) * 100
+        
+        estadisticas.append({
+            'partido': partido,
+            'porcentaje_victoria_local': porcentaje_victoria_local,
+            'porcentaje_victoria_visitante': porcentaje_victoria_visitante,
+            'porcentaje_empate': porcentaje_empate
+        })
+
+    context = {
+        'estadisticas': estadisticas,
+    }
+    return render(request, 'prode/estadisticas.html', context)
