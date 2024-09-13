@@ -1,4 +1,5 @@
 import pdb
+from pyexpat.errors import messages
 from django.shortcuts import get_object_or_404, redirect, render
 from django.db.models import Q
 from prode.models import Grupo, Partido, Prediccion
@@ -6,7 +7,7 @@ from prode.forms import PrediccionForm
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone
 from django.db.models import Count, F, Q
-from prode.utils import calcular_ranking_global, calcular_ranking_grupo, generar_codigo_invitacion
+from prode.utils import calcular_ranking_global, calcular_ranking_grupo
 
 
 def lista_partidos(request):
@@ -143,21 +144,28 @@ def crear_grupo(request):
     return render(request, 'prode/crear_grupo.html')
 
 @login_required
-def unirse_grupo(request):
-    if request.method == 'POST':
-        codigo_invitacion = request.POST.get('codigo_invitacion')
-        
-        # Buscar el grupo con ese código de invitación
-        grupo = get_object_or_404(Grupo, codigo_invitacion=codigo_invitacion)
-        
-        # Añadir al usuario al grupo si aún no está
-        if request.user not in grupo.miembros.all():
-            grupo.miembros.add(request.user)
-            return redirect('detalle_grupo', grupo_id=grupo.id)
-        else:
-            return redirect('')  # Redirigir a la home
+def detalle_grupo(request, grupo_id):
+    # Obtener el grupo o devolver un 404 si no existe
+    grupo = get_object_or_404(Grupo, id=grupo_id)
 
-    return render(request, 'prode/unirse_grupo.html')
+    # Construir la URL de invitación utilizando el código de invitación
+    url_invitacion = request.build_absolute_uri(f'/unirse_grupo/{grupo.codigo_invitacion}/')
+
+    context = {
+        'grupo': grupo,
+        'url_invitacion': url_invitacion
+    }
+
+    return render(request, 'prode/detalle_grupo.html', context)
+
+@login_required
+def unirse_grupo(request, codigo_invitacion):
+    grupo = get_object_or_404(Grupo, codigo_invitacion=codigo_invitacion)
+
+    if request.user not in grupo.miembros.all():
+        grupo.miembros.add(request.user)
+
+    return redirect('detalle_grupo', grupo_id=grupo.id)
 
 @login_required
 def ranking_grupo(request, grupo_id):

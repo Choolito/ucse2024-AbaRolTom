@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalle del Grupo</title>
+</head>
+<body>
+    <h1>Detalles del Grupo: {{ grupo.nombre }}</h1>
+    <p>Descripción: {{ grupo.descripcion }}</p>
+    <p>Privacidad: {{ grupo.get_privacidad_display }}</p>
+    <p>Creador: {{ grupo.creador.username }}</p>
+    <p>Miembros: 
+        <ul>
+            {% for miembro in grupo.miembros.all %}
+                <li>{{ miembro.username }}</li>
+            {% endfor %}
+        </ul>
+    </p>
+
+    <h3>Invita a tus amigos a unirse al grupo</h3>
+    <p>Puedes invitar a otros a unirse a este grupo usando el siguiente enlace:</p>
+    <p><a href="{{ url_invitacion }}">{{ url_invitacion }}</a></p>
+</body>
+</html>

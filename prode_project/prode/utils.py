@@ -20,13 +20,8 @@ def calcular_ranking_grupo(grupo_id):
     grupo = Grupo.objects.get(id=grupo_id)
     
     # Usuarios del grupo con puntaje acumulado en sus predicciones
-    ranking_grupo = grupo.usuarios.annotate(
+    ranking_grupo = grupo.miembros.annotate(
         puntaje_total=Sum(F('predicciones__prediccion_local') + F('predicciones__prediccion_visitante'))
     ).order_by('-puntaje_total')
     
     return ranking_grupo
-
-
-def generar_codigo_invitacion():
-        """Retorna un codigo de invitacion random para los grupos"""
-        return ''.join(random.choices(string.ascii_uppercase + string.digits, k=10))

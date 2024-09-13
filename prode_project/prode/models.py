@@ -49,7 +49,7 @@ class Partido(models.Model):
 
 class Prediccion(models.Model):
     partido = models.ForeignKey(Partido, related_name="predicciones", on_delete=models.CASCADE)
-    usuario = models.ForeignKey(User, on_delete=models.CASCADE)
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE, related_name='predicciones')
     prediccion_local = models.IntegerField()
     prediccion_visitante = models.IntegerField()
 
@@ -100,8 +100,21 @@ class Prediccion(models.Model):
 #Grupo de amigos
 class Grupo(models.Model):
     nombre = models.CharField(max_length=100)
-    usuarios = models.ManyToManyField(User, related_name='grupos')
-    codigo_invitacion = models.CharField(max_length=10, unique=True) #codigo que usaran para unirse al grupo
+    descripcion = models.TextField()
+    privacidad = models.CharField(max_length=10, choices=[('publico', 'Público'), ('privado', 'Privado')])
+    creador = models.ForeignKey(User, on_delete=models.CASCADE)
+    miembros = models.ManyToManyField(User, related_name="grupos", blank=True)
+    codigo_invitacion = models.CharField(max_length=10, unique=True, blank=True, null=True)  
+    
+    def save(self, *args, **kwargs):
+        if not self.codigo_invitacion:
+            self.codigo_invitacion = self.generar_codigo_invitacion()
+        super(Grupo, self).save(*args, **kwargs)
+
+    @staticmethod
+    def generar_codigo_invitacion():
+        """Retorna un código de invitación aleatorio para los grupos."""
+        return ''.join(random.choices(string.ascii_uppercase + string.digits, k=10))
 
     def __str__(self):
         return self.nombre

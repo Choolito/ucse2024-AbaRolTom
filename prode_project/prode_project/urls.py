@@ -20,7 +20,7 @@ from django.urls import include, path
 from django.contrib.auth.decorators import login_required
 from . import views
 from django.contrib.auth.views import LoginView, LogoutView
-from prode.views import crear_grupo, estadisticas_view, lista_partidos, detalle_partido, unirse_grupo
+from prode.views import crear_grupo, estadisticas_view, lista_partidos, detalle_partido, ranking_global, unirse_grupo, ranking_grupo, detalle_grupo
 from django.conf import settings
 from django.conf.urls.static import static
 
@@ -38,7 +38,10 @@ urlpatterns = [
     path('', views.home, name='home'),
     path('estadisticas/', estadisticas_view, name='estadisticas'),
     path('crear_grupo/', crear_grupo, name='crear_grupo'),
-    path('unirse_grupo/<int:grupo_id>/', unirse_grupo, name='unirse_grupo')
+    path('unirse_grupo/<str:codigo_invitacion>/', unirse_grupo, name='unirse_grupo'),
+    path('ranking', ranking_global, name='ranking_global'),
+    path('rankinggrupo/<int:grupo_id>/', ranking_grupo, name='ranking_global'),
+    path('grupo/<int:grupo_id>/', detalle_grupo, name='detalle_grupo'),
 ]
 
 if settings.DEBUG:
