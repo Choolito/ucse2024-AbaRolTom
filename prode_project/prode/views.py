@@ -6,7 +6,7 @@ from prode.forms import PrediccionForm
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone
 from django.db.models import Count, F, Q
-from prode_project.prode.utils import calcular_ranking_global, calcular_ranking_grupo, generar_codigo_invitacion
+from prode.utils import calcular_ranking_global, calcular_ranking_grupo, generar_codigo_invitacion
 
 
 def lista_partidos(request):

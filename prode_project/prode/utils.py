@@ -3,7 +3,7 @@ import string
 from django.contrib.auth.models import User
 from django.db.models import Sum, F
 
-from prode_project.prode.models import Grupo
+from prode.models import Grupo
 
 def calcular_ranking_global():
     """Retorna una lista de usuarios ordenados por puntaje total."""
