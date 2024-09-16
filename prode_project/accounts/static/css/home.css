@@ -16,32 +16,57 @@ body {
 }
 
 .welcome-card {
-    max-width: 1200px; /* Ajusta este valor según sea necesario */
+    max-width: 1200px;
     margin-left: auto;
     margin-right: auto;
 }
 
 .welcome-title {
-    font-size: 2.5rem; /* Tamaño base de la fuente */
-    white-space: nowrap; /* Previene el salto de línea */
-    overflow: hidden; /* Oculta el contenido que se desborda */
-    text-overflow: ellipsis; /* Muestra puntos suspensivos si el texto se desborda */
+    font-size: 2.5rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .welcome-text {
     display: inline-block;
-    max-width: 100%; /* Asegura que el texto no se desborde del contenedor */
+    max-width: 100%;
+}
+
+.btn-lg {
+    padding: 0.75rem 1.5rem;
+    font-size: 1.25rem;
+}
+
+.btn-success {
+    background-color: #28a745;
+    border-color: #28a745;
+}
+
+.btn-info {
+    background-color: #17a2b8;
+    border-color: #17a2b8;
+    color: white;
+}
+
+.btn-success:hover, .btn-info:hover {
+    filter: brightness(90%);
 }
 
 /* Ajustes responsivos */
 @media (max-width: 1200px) {
     .welcome-title {
-        font-size: calc(1.5rem + 1.5vw); /* Ajusta el tamaño de la fuente de forma responsiva */
+        font-size: calc(1.5rem + 1.5vw);
     }
 }
 
 @media (max-width: 768px) {
     .welcome-title {
-        white-space: normal; /* Permite el salto de línea en pantallas muy pequeñas */
+        white-space: normal;
+    }
+    
+    .btn-lg {
+        width: 100%;
+        margin-bottom: 0.5rem;
     }
 }

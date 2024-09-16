@@ -1,6 +1,6 @@
 {% load static %}
 <!doctype html>
-<html lang="en">
+<html lang="es">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -40,9 +40,9 @@
               </ul>
           </div>
       </div>
-  </nav>
+    </nav>
 
-  <div class="container mt-5">
+    <div class="container mt-5">
       <div class="row justify-content-center">
           <div class="col-12">
               <div class="card card-hover welcome-card">
@@ -54,21 +54,40 @@
                       <p class="lead mb-4">
                           El lugar perfecto para pronosticar y competir con tus amigos sobre los partidos de la liga argentina.
                       </p>
-                      {% if user.is_authenticated %}
-                          <a href="{% url 'lista_partidos' %}" class="btn btn-primary btn-lg">
-                              <i class="fas fa-play me-2"></i>Comienza a jugar
+                      <div class="d-flex justify-content-center flex-wrap">
+                          {% if user.is_authenticated %}
+                              <a href="{% url 'lista_partidos' %}" class="btn btn-primary btn-lg m-2">
+                                  <i class="fas fa-play me-2"></i>Comienza a jugar
+                              </a>
+                          {% else %}
+                              <a href="{% url 'login' %}?next={% url 'lista_partidos' %}" class="btn btn-primary btn-lg m-2">
+                                  <i class="fas fa-sign-in-alt me-2"></i>Comienza a jugar
+                              </a>
+                          {% endif %}
+                          <a href="{% url 'ranking_global' %}" class="btn btn-success btn-lg m-2">
+                              <i class="fas fa-list-ol me-2"></i>Ranking Global
                           </a>
-                      {% else %}
-                          <a href="{% url 'login' %}?next={% url 'lista_partidos' %}" class="btn btn-primary btn-lg">
-                              <i class="fas fa-sign-in-alt me-2"></i>Comienza a jugar
-                          </a>
-                      {% endif %}
+                      </div>
                   </div>
               </div>
           </div>
       </div>
-  </div>
+      
+      <div class="row justify-content-center mt-4">
+          <div class="col-md-6">
+              <div class="card card-hover">
+                  <div class="card-body text-center">
+                      <h2 class="card-title mb-3">Crea tu propio grupo</h2>
+                      <p class="card-text">Compite con tus amigos en un grupo personalizado.</p>
+                      <a href="{% url 'crear_grupo' %}" class="btn btn-info btn-lg">
+                          <i class="fas fa-users me-2"></i>Crear Grupo
+                      </a>
+                  </div>
+              </div>
+          </div>
+      </div>
+    </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   </body>
 </html>

@@ -118,20 +118,26 @@
                         {% if user.is_authenticated %}
                             {% if partido.id in predicciones_usuario %}
                                 {% with prediccion=predicciones_usuario|get_item:partido.id %}
-                                    <div class="alert alert-info mb-0" role="alert">
+                                    <div class="alert alert-info mb-2" role="alert">
                                         <strong>Tu Predicción:</strong>
                                         {{ partido.equipo_local }}: {{ prediccion.prediccion_local }} -
                                         {{ partido.equipo_visitante }}: {{ prediccion.prediccion_visitante }}
                                     </div>
                                 {% endwith %}
+                                <a href="{% url 'detalle_partido' partido.id %}" class="btn btn-primary btn-prediccion w-100">
+                                    <i class="fas fa-eye me-2"></i>Ver Detalle
+                                </a>
                             {% elif partido.id not in tiempos_limite %}
                                 <a href="{% url 'detalle_partido' partido.id %}" class="btn btn-primary btn-prediccion w-100">
                                     <i class="fas fa-chart-line me-2"></i>Hacer Predicción
                                 </a>
                             {% else %}
-                                <div class="alert alert-warning mb-0" role="alert">
+                                <div class="alert alert-warning mb-2" role="alert">
                                     <i class="fas fa-clock me-2"></i>El tiempo límite para hacer predicciones ha terminado.
                                 </div>
+                                <a href="{% url 'detalle_partido' partido.id %}" class="btn btn-secondary btn-prediccion w-100">
+                                    <i class="fas fa-eye me-2"></i>Ver Detalle
+                                </a>
                             {% endif %}
                         {% else %}
                             <a href="{% url 'login' %}" class="btn btn-secondary btn-prediccion w-100">

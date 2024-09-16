@@ -64,6 +64,54 @@
                     </div>
                 </div>
 
+                <div class="prediction-stats mt-4">
+                    <h4 class="mb-3">Estadísticas de Predicciones</h4>
+                    <div class="row g-3">
+                        <div class="col-md-6 col-lg-3">
+                            <div class="card h-100 bg-light border-0 shadow-sm">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-users fa-2x mb-3 text-primary"></i>
+                                    <h5 class="card-title">Total de Predicciones</h5>
+                                    <p class="card-text display-6 fw-bold">{{ total_predicciones }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-3">
+                            <div class="card h-100 bg-light border-0 shadow-sm">
+                                <div class="card-body">
+                                    <h5 class="card-title">Victoria {{ partido.equipo_local }}</h5>
+                                    <div class="progress mb-2" style="height: 20px;">
+                                        <div class="progress-bar bg-success" role="progressbar" style="width: {{ porcentaje_victoria_local|floatformat:1 }}%;" aria-valuenow="{{ porcentaje_victoria_local|floatformat:1 }}" aria-valuemin="0" aria-valuemax="100">{{ porcentaje_victoria_local|floatformat:1 }}%</div>
+                                    </div>
+                                    <p class="card-text text-end mb-0">{{ porcentaje_victoria_local|floatformat:1 }}%</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-3">
+                            <div class="card h-100 bg-light border-0 shadow-sm">
+                                <div class="card-body">
+                                    <h5 class="card-title">Empate</h5>
+                                    <div class="progress mb-2" style="height: 20px;">
+                                        <div class="progress-bar bg-warning" role="progressbar" style="width: {{ porcentaje_empate|floatformat:1 }}%;" aria-valuenow="{{ porcentaje_empate|floatformat:1 }}" aria-valuemin="0" aria-valuemax="100">{{ porcentaje_empate|floatformat:1 }}%</div>
+                                    </div>
+                                    <p class="card-text text-end mb-0">{{ porcentaje_empate|floatformat:1 }}%</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-3">
+                            <div class="card h-100 bg-light border-0 shadow-sm">
+                                <div class="card-body">
+                                    <h5 class="card-title">Victoria {{ partido.equipo_visitante }}</h5>
+                                    <div class="progress mb-2" style="height: 20px;">
+                                        <div class="progress-bar bg-danger" role="progressbar" style="width: {{ porcentaje_victoria_visitante|floatformat:1 }}%;" aria-valuenow="{{ porcentaje_victoria_visitante|floatformat:1 }}" aria-valuemin="0" aria-valuemax="100">{{ porcentaje_victoria_visitante|floatformat:1 }}%</div>
+                                    </div>
+                                    <p class="card-text text-end mb-0">{{ porcentaje_victoria_visitante|floatformat:1 }}%</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="prediction-section mt-4">
                     <h4 class="mb-3">Tu Predicción</h4>
                     {% if prediccion_existente %}
@@ -72,9 +120,10 @@
                             {{ partido.equipo_local }}: {{ prediccion_existente.prediccion_local }} goles<br>
                             {{ partido.equipo_visitante }}: {{ prediccion_existente.prediccion_visitante }} goles
                         </div>
-                        <a href="{% url 'lista_partidos' %}" class="btn btn-primary mt-3">
-                            <i class="fas fa-arrow-left me-2"></i>Volver a la lista de partidos
-                        </a>
+                    {% elif tiempo_limite_pasado %}
+                        <div class="alert alert-warning">
+                            <strong>El tiempo límite para hacer predicciones ha terminado.</strong>
+                        </div>
                     {% else %}
                         <form method="POST" class="needs-validation" novalidate>
                             {% csrf_token %}

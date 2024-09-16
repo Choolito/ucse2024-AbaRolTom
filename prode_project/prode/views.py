@@ -8,6 +8,7 @@ from django.contrib.auth.decorators import login_required
 from django.utils import timezone
 from django.db.models import Count, F, Q
 from prode.utils import calcular_ranking_global, calcular_ranking_grupo
+from django.db.models import Count, Case, When, IntegerField
 
 
 def lista_partidos(request):
@@ -71,6 +72,22 @@ def lista_partidos(request):
     fecha_anterior = max(0, current_fecha - 1)
     fecha_siguiente = min(27, current_fecha + 1)
 
+    for partido in partidos:
+        total_predicciones = Prediccion.objects.filter(partido=partido).count()
+        if total_predicciones > 0:
+            estadisticas = Prediccion.objects.filter(partido=partido).aggregate(
+                victoria_local=Count(Case(When(prediccion_local__gt=F('prediccion_visitante'), then=1), output_field=IntegerField())),
+                victoria_visitante=Count(Case(When(prediccion_visitante__gt=F('prediccion_local'), then=1), output_field=IntegerField())),
+                empate=Count(Case(When(prediccion_local=F('prediccion_visitante'), then=1), output_field=IntegerField()))
+            )
+            partido.estadisticas = {
+                'local': round((estadisticas['victoria_local'] / total_predicciones) * 100, 1),
+                'visitante': round((estadisticas['victoria_visitante'] / total_predicciones) * 100, 1),
+                'empate': round((estadisticas['empate'] / total_predicciones) * 100, 1)
+            }
+        else:
+            partido.estadisticas = {'local': 0, 'visitante': 0, 'empate': 0}
+
     context = {
         'partidos': partidos,
         'predicciones_usuario': predicciones_usuario,
@@ -83,6 +100,12 @@ def lista_partidos(request):
 
     return render(request, 'prode/lista_partidos.html', context)
 
+from django.shortcuts import get_object_or_404, redirect, render
+from django.contrib.auth.decorators import login_required
+from django.utils import timezone
+from django.db.models import Count, Case, When, IntegerField, F
+from .models import Partido, Prediccion
+
 @login_required
 def detalle_partido(request, partido_id):
     partido = get_object_or_404(Partido, id=partido_id)
@@ -93,25 +116,45 @@ def detalle_partido(request, partido_id):
 
     # Verificar si la hora del partido - 1 hora es mayor a la hora actual
     tiempo_limite = partido.fecha - timezone.timedelta(hours=1)
-    if timezone.now() > tiempo_limite:
-        return redirect('lista_partidos')
+    tiempo_limite_pasado = timezone.now() > tiempo_limite
 
-    if request.method == 'POST':
-        if not prediccion_existente:  # Evitar duplicados
-            prediccion_local = request.POST.get('prediccion_local')
-            prediccion_visitante = request.POST.get('prediccion_visitante')
+    if request.method == 'POST' and not prediccion_existente and not tiempo_limite_pasado:
+        prediccion_local = request.POST.get('prediccion_local')
+        prediccion_visitante = request.POST.get('prediccion_visitante')
 
-            Prediccion.objects.create(
-                partido=partido,
-                usuario=usuario,
-                prediccion_local=prediccion_local,
-                prediccion_visitante=prediccion_visitante
-            )
-        return redirect('lista_partidos')
+        Prediccion.objects.create(
+            partido=partido,
+            usuario=usuario,
+            prediccion_local=prediccion_local,
+            prediccion_visitante=prediccion_visitante
+        )
+        return redirect('detalle_partido', partido_id=partido.id)
+
+    # Calcular estadísticas de predicciones
+    predicciones = Prediccion.objects.filter(partido=partido)
+    total_predicciones = predicciones.count()
+
+    if total_predicciones > 0:
+        resultados = predicciones.aggregate(
+            victoria_local=Count(Case(When(prediccion_local__gt=F('prediccion_visitante'), then=1), output_field=IntegerField())),
+            empate=Count(Case(When(prediccion_local=F('prediccion_visitante'), then=1), output_field=IntegerField())),
+            victoria_visitante=Count(Case(When(prediccion_local__lt=F('prediccion_visitante'), then=1), output_field=IntegerField()))
+        )
+        
+        porcentaje_victoria_local = (resultados['victoria_local'] / total_predicciones) * 100
+        porcentaje_empate = (resultados['empate'] / total_predicciones) * 100
+        porcentaje_victoria_visitante = (resultados['victoria_visitante'] / total_predicciones) * 100
+    else:
+        porcentaje_victoria_local = porcentaje_empate = porcentaje_victoria_visitante = 0
 
     context = {
         'partido': partido,
-        'prediccion_existente': prediccion_existente
+        'prediccion_existente': prediccion_existente,
+        'tiempo_limite_pasado': tiempo_limite_pasado,
+        'total_predicciones': total_predicciones,
+        'porcentaje_victoria_local': porcentaje_victoria_local,
+        'porcentaje_victoria_visitante': porcentaje_victoria_visitante,
+        'porcentaje_empate': porcentaje_empate,
     }
     return render(request, 'prode/detalle_partido.html', context)
 
