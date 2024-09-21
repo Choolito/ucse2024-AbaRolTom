@@ -9,7 +9,8 @@ from django.utils import timezone
 from django.db.models import Count, F, Q
 from prode.utils import calcular_ranking_global, calcular_ranking_grupo
 from django.db.models import Count, Case, When, IntegerField
-
+from django.http import JsonResponse
+from django.views.decorators.http import require_http_methods
 
 def lista_partidos(request):
     # Obtener la fecha actual de la liga
@@ -169,22 +170,49 @@ def ranking_global(request):
     return render(request, 'prode/ranking_global.html', context)
 
 @login_required
+@require_http_methods(["GET", "POST"])
 def crear_grupo(request):
+    # Fetch the groups created by the user
+    grupos_creados = Grupo.objects.filter(creador=request.user)
+
+    # Fetch the groups where the user is a member but not the creator
+    grupos_unidos = Grupo.objects.filter(miembros=request.user).exclude(creador=request.user)
+
     if request.method == 'POST':
         nombre = request.POST.get('nombre_grupo')
         descripcion = request.POST.get('descripcion_grupo', '')
         privacidad = request.POST.get('privacidad_grupo', 'publico')
 
-        # Crear el grupo con el usuario actual como creador
-        grupo = Grupo.objects.create(
-            nombre=nombre,
-            descripcion=descripcion,
-            privacidad=privacidad,
-            creador=request.user  # Suponiendo que la relación está en el modelo
-        )
-        return redirect('detalle_grupo', grupo_id=grupo.id)
+        try:
+            grupo = Grupo.objects.create(
+                nombre=nombre,
+                descripcion=descripcion,
+                privacidad=privacidad,
+                creador=request.user
+            )
+            grupo.miembros.add(request.user)
+            url_invitacion = request.build_absolute_uri(f'/unirse_grupo/{grupo.codigo_invitacion}/')
+            
+            return JsonResponse({
+                'success': True,
+                'grupo': {
+                    'id': grupo.id,
+                    'nombre': grupo.nombre,
+                    'descripcion': grupo.descripcion,
+                    'privacidad': grupo.get_privacidad_display(),
+                    'creador': grupo.creador.username,
+                    'miembros': [miembro.username for miembro in grupo.miembros.all()],
+                    'url_invitacion': url_invitacion
+                }
+            })
+        except Exception as e:
+            return JsonResponse({'success': False, 'error': str(e)})
 
-    return render(request, 'prode/crear_grupo.html')
+    context = {
+        'grupos_creados': grupos_creados,
+        'grupos_unidos': grupos_unidos
+    }
+    return render(request, 'prode/crear_grupo.html', context)
 
 @login_required
 def detalle_grupo(request, grupo_id):
