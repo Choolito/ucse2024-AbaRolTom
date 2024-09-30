@@ -11,6 +11,7 @@ from prode.utils import calcular_ranking_global, calcular_ranking_grupo
 from django.db.models import Count, Case, When, IntegerField
 from django.http import JsonResponse
 from django.views.decorators.http import require_http_methods
+from django.contrib import messages
 
 def lista_partidos(request):
     # Obtener la fecha actual de la liga
@@ -248,3 +249,18 @@ def ranking_grupo(request, grupo_id):
         'ranking': ranking,
     }
     return render(request, 'prode/ranking_grupo.html', context)
+
+@login_required
+def salir_grupo(request, grupo_id):
+    if request.method == 'POST':
+        grupo = get_object_or_404(Grupo, id=grupo_id)
+        if request.user in grupo.miembros.all():
+            if request.user != grupo.creador:
+                grupo.miembros.remove(request.user)
+                messages.success(request, f"Has salido del grupo '{grupo.nombre}'.")
+            else:
+                messages.error(request, "No puedes salir del grupo que has creado.")
+        else:
+            messages.error(request, "No eres miembro de este grupo.")
+        return redirect('crear_grupo')
+    return redirect('detalle_grupo', grupo_id=grupo_id)
