@@ -26,15 +26,15 @@
                           <form method="post" action="{% url 'logout' %}">
                               {% csrf_token %}
                               <input type="hidden" name="next" value="{% url 'home' %}">
-                              <button type="submit" class="nav-link btn btn-link">Cerrar sesión</button>
+                              <button type="submit" class="nav-link btn btn-outline-light">Cerrar sesión</button>
                           </form>
                       </li>
                   {% else %}
                       <li class="nav-item">
-                          <a class="nav-link" href="{% url 'login' %}">Iniciar sesión</a>
+                          <a class="nav-link btn btn-outline-light me-2" href="{% url 'login' %}">Iniciar sesión</a>
                       </li>
                       <li class="nav-item">
-                          <a class="nav-link" href="{% url 'register' %}">Registrarse</a>
+                          <a class="nav-link btn btn-outline-light me-2" href="{% url 'register' %}">Registrarse</a>
                       </li>
                   {% endif %}
               </ul>

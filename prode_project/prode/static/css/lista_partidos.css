@@ -1,19 +1,11 @@
-:root {
-    --primary-color: #0000cd;
-    --secondary-color: #2ecc71;
-    --accent-color: #e74c3c;
-    --background-color: #ecf0f1;
-    --text-color: #2c3e50;
-}
-
 body {
-    background-color: var(--background-color);
-    color: var(--text-color);
+    background-color: #f0f8ff;
+    color: #000080;
     font-family: Arial, sans-serif;
 }
 
 .navbar {
-    background-color: var(--primary-color) !important;
+    background-color: #0000cd !important;
 }
 
 .container {
@@ -24,18 +16,10 @@ body {
     border: none;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     margin-bottom: 20px;
-    background-color: white;
-    border-radius: 15px;
-    overflow: hidden;
-    transition: transform 0.3s ease;
-}
-
-.card:hover {
-    transform: translateY(-5px);
 }
 
 .card-header {
-    background-color: var(--primary-color);
+    background-color: #1e90ff;
     color: white;
     font-weight: bold;
 }
@@ -46,7 +30,7 @@ body {
     height: 30px;
     line-height: 30px;
     text-align: center;
-    background-color: var(--secondary-color);
+    background-color: #4169e1;
     color: white;
     margin: 5px;
     border-radius: 50%;
@@ -54,9 +38,13 @@ body {
     transition: background-color 0.3s ease;
 }
 
-.fecha-number.active, .fecha-number:hover {
-    background-color: var(--accent-color);
+.fecha-number.active {
+    background-color: #0000ff;
     font-weight: bold;
+}
+
+.fecha-number:hover {
+    background-color: #0000ff;
 }
 
 .chevron-icon {
@@ -66,11 +54,11 @@ body {
 }
 
 .chevron-icon:hover {
-    color: var(--accent-color);
+    color: #f0f8ff;
 }
 
 .date-header {
-    background-color: var(--secondary-color);
+    background-color: #1e90ff;
     color: white;
     padding: 10px;
     margin-bottom: 15px;
@@ -80,13 +68,13 @@ body {
 
 .match-card {
     background-color: white;
-    border: 1px solid var(--primary-color);
+    border: 1px solid #4169e1;
     border-radius: 5px;
     overflow: hidden;
 }
 
 .match-card .card-header {
-    background-color: var(--primary-color);
+    background-color: #4169e1;
     color: white;
     display: flex;
     justify-content: space-between;
@@ -132,30 +120,30 @@ body {
 
 .team-name {
     font-weight: bold;
-    color: var(--text-color);
+    color: #000080;
 }
 
 .score {
     font-size: 1.5em;
     font-weight: bold;
-    color: var(--accent-color);
+    color: #000080;
 }
 
 .scorers {
     font-size: 0.9em;
-    color: var(--primary-color);
+    color: #4169e1;
     margin-top: 10px;
 }
 
 .btn-prediccion {
-    background-color: var(--secondary-color);
-    border-color: var(--secondary-color);
+    background-color: #4169e1;
+    border-color: #4169e1;
     transition: all 0.3s ease;
 }
 
 .btn-prediccion:hover {
-    background-color: var(--accent-color);
-    border-color: var(--accent-color);
+    background-color: #0000cd;
+    border-color: #0000cd;
     transform: translateY(-2px);
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
