@@ -82,7 +82,7 @@
                         <span class="match-status" data-partido-id="{{ partido.id }}" data-fecha="{{ partido.fecha|date:'Y-m-d H:i:s' }}">
                             {{ partido.get_status_display }}
                         </span>
-                        <span class="match-time">Fecha Liga: {{fecha_liga}} - Hora: {{ partido.fecha|date:"H:i" }}</span>
+                        <span class="match-time">Fecha Liga: {{partido.fecha_liga}} - Hora: {{ partido.fecha|date:"H:i" }}</span>
                     </div>
                     <div class="card-body">
                         <div class="row align-items-center">
