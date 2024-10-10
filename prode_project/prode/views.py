@@ -9,9 +9,16 @@ from django.utils import timezone
 from django.db.models import Count, F, Q
 from prode.utils import calcular_ranking_global, calcular_ranking_grupo
 from django.db.models import Count, Case, When, IntegerField
-from django.http import JsonResponse
+from django.http import HttpResponse, JsonResponse
 from django.views.decorators.http import require_http_methods
 from django.contrib import messages
+from haystack.query import SearchQuerySet
+from django.core.management import call_command
+from django.shortcuts import get_object_or_404, redirect, render
+from django.contrib.auth.decorators import login_required
+from django.utils import timezone
+from django.db.models import Count, Case, When, IntegerField, F
+from .models import Partido, Prediccion
 
 def lista_partidos(request):
     # Obtener la fecha actual de la liga
@@ -21,24 +28,33 @@ def lista_partidos(request):
     # Asegurarse de que current_fecha esté dentro del rango válido
     current_fecha = max(0, min(current_fecha, 27))
 
-    # Filtrar partidos
+    # Filtrar partidos por fecha de la liga
     if current_fecha == 0:
         partidos = Partido.objects.all().order_by('fecha_liga', 'fecha')
     else:
         partidos = Partido.objects.filter(fecha_liga=current_fecha).order_by('fecha')
 
-    # Aplicar filtros adicionales si se proporcionan
+    # Implementación del buscador global
+    query = request.GET.get('q', '')
+    results = SearchQuerySet().filter(content=query) if query else None
+
+    # Implementación de los filtros (equipo, fecha y hora)
     equipo = request.GET.get('equipo')
     fecha = request.GET.get('fecha')
     hora = request.GET.get('hora')
 
+    # Filtrar por equipo
     if equipo:
         partidos = partidos.filter(
             Q(equipo_local__nombre__icontains=equipo) | 
             Q(equipo_visitante__nombre__icontains=equipo)
         )
+
+    # Filtrar por fecha
     if fecha:
         partidos = partidos.filter(fecha__date=fecha)
+
+    # Filtrar por hora
     if hora:
         partidos = partidos.filter(fecha__time__startswith=hora)
 
@@ -98,15 +114,11 @@ def lista_partidos(request):
         'current_fecha': current_fecha,
         'fecha_anterior': fecha_anterior,
         'fecha_siguiente': fecha_siguiente,
+        'query': query,
+        'results': results  # Para el buscador global
     }
 
     return render(request, 'prode/lista_partidos.html', context)
-
-from django.shortcuts import get_object_or_404, redirect, render
-from django.contrib.auth.decorators import login_required
-from django.utils import timezone
-from django.db.models import Count, Case, When, IntegerField, F
-from .models import Partido, Prediccion
 
 @login_required
 def detalle_partido(request, partido_id):
@@ -264,3 +276,31 @@ def salir_grupo(request, grupo_id):
             messages.error(request, "No eres miembro de este grupo.")
         return redirect('crear_grupo')
     return redirect('detalle_grupo', grupo_id=grupo_id)
+
+def buscar_partidos(request):
+    query = request.GET.get('q', '')  # Recupera el valor del input de búsqueda
+    
+    # Filtra partidos por el equipo local o visitante que coincida con la búsqueda
+    partidos = Partido.objects.filter(
+        Q(equipo_local__nombre__icontains=query) | Q(equipo_visitante__nombre__icontains=query)
+    )
+    
+    # Renderiza el template de lista de partidos, enviando los partidos filtrados
+    return render(request, 'prode/lista_partidos.html', {'partidos': partidos, 'query': query})
+
+def robots_txt(request):
+    lines = [
+        "User-Agent: *",
+        "Disallow: /admin/",
+        "Allow: /",
+    ]
+    return HttpResponse("\n".join(lines), content_type="text/plain")
+
+def rebuild_index(request):
+    try:
+        call_command('rebuild_index', interactive=False)
+        result = "Index rebuilt successfully."
+    except Exception as e:
+        result = f"Error: {e}"
+
+    return JsonResponse({"result": result})

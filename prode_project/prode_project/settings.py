@@ -30,6 +30,8 @@ INSTALLED_APPS = [
     'accounts',
     'widget_tweaks',
     'storages',
+    'haystack',
+    'whoosh'
 ]
 
 MIDDLEWARE = [
@@ -44,6 +46,14 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'prode_project.urls'
+
+# Configuración para Haystack con Whoosh como motor de búsqueda
+HAYSTACK_CONNECTIONS = {
+    'default': {
+        'ENGINE': 'haystack.backends.whoosh_backend.WhooshEngine',
+        'PATH': os.path.join(BASE_DIR, 'whoosh_index'),
+    },
+}
 
 TEMPLATES = [
     {

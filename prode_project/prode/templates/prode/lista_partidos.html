@@ -43,6 +43,15 @@
                 </div>
             </div>
         </div>
+        <!-- Buscador independiente -->
+        <div class="container mt-4">
+            <form method="GET" action="{% url 'buscar_partidos' %}" class="d-flex mb-4">
+                <input class="form-control me-2" type="search" name="q" placeholder="Buscar equipo, partidos..." aria-label="Buscar equipo" value="{{ request.GET.q }}">
+                <button class="btn btn-outline-success" type="submit"><i class="fas fa-search me-2"></i>Buscar</button>
+            </form>
+        </div>
+
+        <!--Filtros-->
         <div class="card mb-4">
             <div class="card-body">
                 <h5 class="card-title mb-3">Filtrar Partidos</h5>
