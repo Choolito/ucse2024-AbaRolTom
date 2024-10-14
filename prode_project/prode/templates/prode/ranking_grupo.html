@@ -35,11 +35,11 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {% for usuario in ranking %}
+                        {% for usuario, puntaje in ranking %}
                             <tr>
                                 <td>{{ forloop.counter }}</td>
                                 <td>{{ usuario.username }}</td>
-                                <td>{{ usuario.puntaje_total }}</td>
+                                <td>{{ puntaje }}</td>
                             </tr>
                         {% empty %}
                             <tr>
