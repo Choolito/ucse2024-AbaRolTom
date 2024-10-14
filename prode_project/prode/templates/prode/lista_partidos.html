@@ -47,6 +47,7 @@
         <div class="container mt-4">
             <form method="GET" action="{% url 'buscar_partidos' %}" class="d-flex mb-4">
                 <input class="form-control me-2" type="search" name="q" placeholder="Buscar equipo, partidos..." aria-label="Buscar equipo" value="{{ request.GET.q }}">
+                <input type="hidden" name="fecha_liga" value="{{ current_fecha }}"> <!-- Campo oculto para fecha_liga -->
                 <button class="btn btn-outline-success" type="submit"><i class="fas fa-search me-2"></i>Buscar</button>
             </form>
         </div>

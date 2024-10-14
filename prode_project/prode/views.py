@@ -286,7 +286,7 @@ def buscar_partidos(request):
     )
     
     # Renderiza el template de lista de partidos, enviando los partidos filtrados
-    return render(request, 'prode/lista_partidos.html', {'partidos': partidos, 'query': query})
+    return render(request, 'prode/lista_partidos.html', {'partidos': partidos, 'query': query, 'rango_fechas': range(1, 28),})
 
 def robots_txt(request):
     lines = [

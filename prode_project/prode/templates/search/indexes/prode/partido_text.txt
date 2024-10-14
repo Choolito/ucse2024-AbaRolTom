@@ -1,3 +1,4 @@
 {{ object.equipo_local.nombre }} vs {{ object.equipo_visitante.nombre }} - {{ object.fecha }}
 {{ object.equipo_local.nombre }} vs {{ object.equipo_visitante.nombre }}
 {{ object.fecha }}
+fecha {{object.fecha}}
