@@ -44,6 +44,7 @@
                                 <label for="password" class="form-label">Contraseña</label>
                                 {% render_field form.password class="form-control" placeholder="Ingresa tu contraseña" %}
                             </div>
+                            <input type="hidden" name="next" value="{{ next }}">
                             <button type="submit" class="btn btn-primary w-100">
                                 <i class="fas fa-sign-in-alt me-2"></i>Iniciar Sesión
                             </button>

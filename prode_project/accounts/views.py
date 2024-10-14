@@ -61,6 +61,9 @@ def home(request):
 def login_view(request):
     form = AuthenticationForm(request, data=request.POST or None)
     
+    # Obtener el parámetro 'next' en el GET o POST, para manejar el redireccionamiento correctamente
+    next_url = request.GET.get('next') or request.POST.get('next') or '/partidos/'
+
     if request.method == "POST":
         if form.is_valid():
             username = form.cleaned_data.get('username')
@@ -69,6 +72,7 @@ def login_view(request):
             if user is not None:
                 if user.is_active:
                     login(request, user)
+                    return redirect(next_url)
                 else:
                     form.add_error(None, "Por favor, verifica tu correo electrónico antes de iniciar sesión.")
             else:
