@@ -1,6 +1,8 @@
 # Usa una imagen base de Python
 FROM python:3.10-slim
 
+ENV DATABASE_PATH=/data/db.sqlite3
+
 # Establece el directorio de trabajo en /app
 WORKDIR /app
 
