@@ -4,6 +4,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
 from django.db.models import Sum, F
+from rest_framework import serializers
 
 class Equipo(models.Model):
     nombre = models.CharField(max_length=100)
@@ -118,3 +119,24 @@ class Grupo(models.Model):
 
     def __str__(self):
         return self.nombre
+    
+class ChatMessage(models.Model):
+    partido = models.ForeignKey('Partido', on_delete=models.CASCADE)
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE)
+    mensaje = models.TextField()
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['timestamp']
+
+class ChatMessageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ChatMessage
+        fields = '__all__'
+
+class ChatShowMessagesSerializer(serializers.ModelSerializer):
+    usuario = serializers.CharField(source='usuario.username', read_only=True)  # Devuelve el nombre de usuario
+    
+    class Meta:
+        model = ChatMessage
+        fields = ['id', 'partido', 'usuario', 'mensaje', 'timestamp']

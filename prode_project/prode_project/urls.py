@@ -20,7 +20,7 @@ from django.urls import include, path
 from django.contrib.auth.decorators import login_required
 from . import views
 from django.contrib.auth.views import LoginView, LogoutView
-from prode.views import buscar_partidos, crear_grupo, lista_partidos, detalle_partido, ranking_global, rebuild_index, robots_txt, unirse_grupo, ranking_grupo, detalle_grupo, salir_grupo
+from prode.views import chat_view, buscar_partidos, crear_grupo, lista_partidos, detalle_partido, ranking_global, rebuild_index, robots_txt, unirse_grupo, ranking_grupo, detalle_grupo, salir_grupo
 from django.conf import settings
 from django.conf.urls.static import static
 
@@ -45,6 +45,7 @@ urlpatterns = [
     path('buscar/', buscar_partidos, name='buscar_partidos'),
     path('rebuild_index/', rebuild_index),
     path('robots.txt', robots_txt),
+    path('chat/<int:partido_id>/', chat_view, name='chat_api'),
 ]
 
 if settings.DEBUG:

@@ -18,7 +18,9 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone
 from django.db.models import Count, Case, When, IntegerField, F
-from .models import Partido, Prediccion
+from .models import ChatShowMessagesSerializer, Partido, Prediccion, ChatMessage, ChatMessageSerializer
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
 
 def lista_partidos(request):
     # Obtener la fecha actual de la liga
@@ -163,12 +165,14 @@ def detalle_partido(request, partido_id):
 
     context = {
         'partido': partido,
+        'usuario': usuario,
         'prediccion_existente': prediccion_existente,
         'tiempo_limite_pasado': tiempo_limite_pasado,
         'total_predicciones': total_predicciones,
         'porcentaje_victoria_local': porcentaje_victoria_local,
         'porcentaje_victoria_visitante': porcentaje_victoria_visitante,
         'porcentaje_empate': porcentaje_empate,
+        'chat_api_url': f"/chat/{partido_id}/"  # URL de la API del chat
     }
     return render(request, 'prode/detalle_partido.html', context)
 
@@ -304,3 +308,21 @@ def rebuild_index(request):
         result = f"Error: {e}"
 
     return JsonResponse({"result": result})
+
+@api_view(['GET', 'POST'])
+def chat_view(request, partido_id):
+    if request.method == 'POST':
+        data = {
+            'partido': partido_id,
+            'usuario': request.user.id,
+            'mensaje': request.data['mensaje']
+        }
+        serializer = ChatMessageSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=201)
+        return Response(serializer.errors, status=400)
+    else:
+        messages = ChatMessage.objects.filter(partido_id=partido_id)
+        serializer = ChatShowMessagesSerializer(messages, many=True)
+        return Response(serializer.data)

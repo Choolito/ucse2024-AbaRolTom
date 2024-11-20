@@ -31,7 +31,8 @@ INSTALLED_APPS = [
     'widget_tweaks',
     'storages',
     'haystack',
-    'whoosh'
+    'whoosh',
+    'rest_framework'
 ]
 
 MIDDLEWARE = [
