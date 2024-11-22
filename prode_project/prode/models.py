@@ -3,12 +3,12 @@ import string
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
-from django.db.models import Sum, F
 from rest_framework import serializers
 
 class Equipo(models.Model):
     nombre = models.CharField(max_length=100)
     escudo = models.ImageField(upload_to='escudos/', null=True, blank=True)
+    siglas = models.CharField(max_length=5)
     
     def __str__(self):
         return str(self.nombre)
